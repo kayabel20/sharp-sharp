@@ -1,0 +1,31 @@
+{
+  "name": "Sharp Sharp",
+  "short_name": "Sharp Sharp",
+  "description": "Instant loans in Nigeria. Apply in minutes.",
+  "start_url": "/dashboard",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#2E86AB",
+  "theme_color": "#2E86AB",
+  "lang": "en-NG",
+  "categories": ["finance"],
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    { "name": "Apply", "url": "/apply", "short_name": "Apply" },
+    { "name": "Dashboard", "url": "/dashboard", "short_name": "Home" }
+  ]
+}

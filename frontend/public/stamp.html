@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Sharp Sharp — Design Stamp</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root {
+    --brand-50: #E8F4FD;
+    --brand-500: #2E86AB;
+    --brand-600: #256D8C;
+    --brand-700: #1C546D;
+    --ink-900: #0B222F;
+    --gray-50: #f9fafb;
+    --gray-200: #e5e7eb;
+    --gray-500: #6b7280;
+    --gray-900: #111827;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: linear-gradient(180deg, #f5f7fb 0%, #eaeef5 100%);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+    color: var(--ink-900);
+    min-height: 100vh;
+  }
+  header {
+    padding: 48px 32px 24px;
+    text-align: center;
+  }
+  header h1 {
+    margin: 0 0 8px;
+    font-size: 40px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--brand-700);
+  }
+  header p {
+    margin: 0 auto;
+    font-size: 16px;
+    color: var(--gray-500);
+    max-width: 580px;
+    line-height: 1.5;
+  }
+  .meta {
+    margin-top: 14px;
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .pill {
+    padding: 4px 12px;
+    border: 1px solid var(--gray-200);
+    border-radius: 999px;
+    background: white;
+    font-size: 12px;
+    color: var(--gray-500);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(390px, 1fr));
+    gap: 56px 32px;
+    padding: 32px 48px 80px;
+    max-width: 1800px;
+    margin: 0 auto;
+  }
+  .screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .label {
+    margin-bottom: 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gray-900);
+    letter-spacing: 0.02em;
+  }
+  .label small {
+    display: block;
+    font-weight: 400;
+    color: var(--gray-500);
+    font-size: 11px;
+    margin-top: 2px;
+    font-family: ui-monospace, SF Mono, Menlo, monospace;
+  }
+
+  /* iPhone 15 Pro frame: 393x852 viewport */
+  .device {
+    width: 413px;            /* viewport + 10px bezel each side */
+    height: 872px;
+    background: #1c1c1e;
+    border-radius: 54px;
+    padding: 10px;
+    box-shadow:
+      0 30px 60px -20px rgba(20, 30, 50, 0.45),
+      0 0 0 2px rgba(255, 255, 255, 0.05) inset;
+    position: relative;
+  }
+  .device::before {  /* dynamic island */
+    content: "";
+    position: absolute;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 110px;
+    height: 28px;
+    background: #000;
+    border-radius: 18px;
+    z-index: 2;
+  }
+  .device iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    border-radius: 44px;
+    background: white;
+    display: block;
+  }
+
+  /* Tokens panel */
+  .tokens {
+    background: white;
+    margin: 0 auto 80px;
+    max-width: 1200px;
+    padding: 40px;
+    border-radius: 24px;
+    box-shadow: 0 4px 30px rgba(20, 30, 50, 0.06);
+  }
+  .tokens h2 {
+    margin: 0 0 8px;
+    color: var(--brand-700);
+    font-size: 24px;
+  }
+  .tokens p {
+    margin: 0 0 24px;
+    color: var(--gray-500);
+    font-size: 14px;
+  }
+  .tokens-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 32px;
+  }
+  .token-block h3 {
+    margin: 0 0 12px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--gray-500);
+  }
+  .swatch-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .swatch {
+    width: 56px;
+    height: 56px;
+    border-radius: 10px;
+    flex-shrink: 0;
+    border: 1px solid rgba(0,0,0,0.06);
+    position: relative;
+  }
+  .swatch span {
+    position: absolute;
+    bottom: -16px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 10px;
+    color: var(--gray-500);
+    font-family: ui-monospace, SF Mono, Menlo, monospace;
+  }
+  .scale-row { display: grid; gap: 8px; }
+  .scale-row .item {
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: 12px;
+    align-items: center;
+    font-size: 13px;
+  }
+  .scale-row code {
+    color: var(--brand-600);
+    font-size: 12px;
+  }
+  .footer {
+    text-align: center;
+    padding: 32px 16px 64px;
+    color: var(--gray-500);
+    font-size: 13px;
+  }
+  .footer a {
+    color: var(--brand-600);
+    text-decoration: none;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Sharp Sharp</h1>
+  <p>End-to-end borrower journey rendered at iPhone&nbsp;15&nbsp;Pro viewport (393&times;852). Each frame embeds the live web app at <code>localhost:3000</code>.</p>
+  <div class="meta">
+    <span class="pill">Next.js 14 · Tailwind</span>
+    <span class="pill">Brand · #2E86AB</span>
+    <span class="pill">14-step pipeline</span>
+    <span class="pill">5 LightGBM PD models</span>
+  </div>
+</header>
+
+<div class="grid">
+  <div class="screen">
+    <div class="label">Landing<small>/</small></div>
+    <div class="device"><iframe src="http://localhost:3000/" loading="lazy"></iframe></div>
+  </div>
+
+  <div class="screen">
+    <div class="label">Sign up<small>/auth/signup</small></div>
+    <div class="device"><iframe src="http://localhost:3000/auth/signup" loading="lazy"></iframe></div>
+  </div>
+
+  <div class="screen">
+    <div class="label">Log in<small>/auth/login</small></div>
+    <div class="device"><iframe src="http://localhost:3000/auth/login" loading="lazy"></iframe></div>
+  </div>
+
+  <div class="screen">
+    <div class="label">Dashboard<small>/dashboard (auth required)</small></div>
+    <div class="device"><iframe src="http://localhost:3000/dashboard" loading="lazy"></iframe></div>
+  </div>
+
+  <div class="screen">
+    <div class="label">KYC onboarding<small>/onboarding/kyc</small></div>
+    <div class="device"><iframe src="http://localhost:3000/onboarding/kyc" loading="lazy"></iframe></div>
+  </div>
+
+  <div class="screen">
+    <div class="label">Bank linking (Mono)<small>/onboarding/bank</small></div>
+    <div class="device"><iframe src="http://localhost:3000/onboarding/bank" loading="lazy"></iframe></div>
+  </div>
+
+  <div class="screen">
+    <div class="label">Apply for loan<small>/apply</small></div>
+    <div class="device"><iframe src="http://localhost:3000/apply" loading="lazy"></iframe></div>
+  </div>
+
+  <div class="screen">
+    <div class="label">Profile<small>/profile</small></div>
+    <div class="device"><iframe src="http://localhost:3000/profile" loading="lazy"></iframe></div>
+  </div>
+</div>
+
+<section class="tokens">
+  <h2>Design tokens</h2>
+  <p>Drop these into Figma Variables, Tailwind config, or your design system. <a href="design-tokens.json">design-tokens.json</a></p>
+
+  <div class="tokens-grid">
+    <div class="token-block">
+      <h3>Brand palette</h3>
+      <div class="swatch-row">
+        <div class="swatch" style="background:#E8F4FD"><span>50</span></div>
+        <div class="swatch" style="background:#C5E3F9"><span>100</span></div>
+        <div class="swatch" style="background:#9DD0F5"><span>200</span></div>
+        <div class="swatch" style="background:#6DB9EF"><span>300</span></div>
+        <div class="swatch" style="background:#3FA2E8"><span>400</span></div>
+      </div>
+      <div class="swatch-row" style="margin-top:18px">
+        <div class="swatch" style="background:#2E86AB"><span>500</span></div>
+        <div class="swatch" style="background:#256D8C"><span>600</span></div>
+        <div class="swatch" style="background:#1C546D"><span>700</span></div>
+        <div class="swatch" style="background:#143B4E"><span>800</span></div>
+        <div class="swatch" style="background:#0B222F"><span>900</span></div>
+      </div>
+    </div>
+
+    <div class="token-block">
+      <h3>Semantic</h3>
+      <div class="swatch-row">
+        <div class="swatch" style="background:#10B981"><span>success</span></div>
+        <div class="swatch" style="background:#F59E0B"><span>warning</span></div>
+        <div class="swatch" style="background:#EF4444"><span>danger</span></div>
+        <div class="swatch" style="background:#f9fafb;border:1px solid #e5e7eb"><span>bg</span></div>
+        <div class="swatch" style="background:#111827"><span>ink</span></div>
+      </div>
+    </div>
+
+    <div class="token-block">
+      <h3>Type scale</h3>
+      <div class="scale-row">
+        <div class="item"><code>40/800</code> <span style="font-size:24px;font-weight:800">Display</span></div>
+        <div class="item"><code>24/700</code> <span style="font-size:20px;font-weight:700">Heading</span></div>
+        <div class="item"><code>18/600</code> <span style="font-size:16px;font-weight:600">Subhead</span></div>
+        <div class="item"><code>14/500</code> <span style="font-size:14px;font-weight:500">Body</span></div>
+        <div class="item"><code>12/400</code> <span style="font-size:12px;color:#6b7280">Caption · monospace tag</span></div>
+      </div>
+    </div>
+
+    <div class="token-block">
+      <h3>Radius &middot; spacing</h3>
+      <div class="scale-row">
+        <div class="item"><code>radius-sm</code> <span style="display:inline-block;width:48px;height:24px;background:#e5e7eb;border-radius:8px"></span> 8px</div>
+        <div class="item"><code>radius-md</code> <span style="display:inline-block;width:48px;height:24px;background:#e5e7eb;border-radius:12px"></span> 12px</div>
+        <div class="item"><code>radius-lg</code> <span style="display:inline-block;width:48px;height:24px;background:#e5e7eb;border-radius:20px"></span> 20px</div>
+        <div class="item"><code>radius-xl</code> <span style="display:inline-block;width:48px;height:24px;background:#e5e7eb;border-radius:32px"></span> 32px</div>
+        <div class="item"><code>page-pad</code> 16px (mobile) · 32px (tablet+)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="footer">
+  Live preview · Make sure the docker stack is running (<code>docker compose up -d</code>) on <code>localhost:3000</code>.<br/>
+  This file: <code>~/sharp-sharp/docs/design-stamp.html</code>
+</div>
+
+</body>
+</html>

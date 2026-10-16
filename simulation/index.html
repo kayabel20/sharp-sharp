@@ -1,0 +1,1602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sharp Sharp - Lending App Simulation</title>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Space+Mono:wght@400;700&display=swap">
+
+<style>
+/* Sharp Sharp — mobile lending app simulation. Phone-framed, screen-by-screen. */
+:root {
+  --brand: #1B6B4A;
+  --brand-light: #2A9D6F;
+  --brand-dark: #0F4A32;
+  --brand-glow: #34D399;
+  --surface: #FFFFFF;
+  --surface-2: #F5F7F6;
+  --surface-3: #E8EEEB;
+  --fg: #1A1F1C;
+  --fg-2: #5A6B62;
+  --fg-3: #8A9990;
+  --danger: #DC2626;
+  --warning: #F59E0B;
+  --success: #16A34A;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+  --font-mono: 'Space Mono', monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --brand: #34D399;
+    --brand-light: #6EE7B7;
+    --brand-dark: #059669;
+    --brand-glow: #34D399;
+    --surface: #0F1512;
+    --surface-2: #1A2320;
+    --surface-3: #243330;
+    --fg: #E8F0EC;
+    --fg-2: #9AADA2;
+    --fg-3: #6B8078;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --brand: #34D399;
+  --brand-light: #6EE7B7;
+  --brand-dark: #059669;
+  --brand-glow: #34D399;
+  --surface: #0F1512;
+  --surface-2: #1A2320;
+  --surface-3: #243330;
+  --fg: #E8F0EC;
+  --fg-2: #9AADA2;
+  --fg-3: #6B8078;
+  color-scheme: dark;
+}
+
+body {
+  background: var(--surface-2);
+  color: var(--fg);
+  font-family: var(--font-body);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 24px;
+}
+
+/* Phone frame */
+.phone {
+  width: 375px;
+  max-width: 100%;
+  height: 812px;
+  max-height: calc(100vh - 48px);
+  background: var(--surface);
+  border-radius: 40px;
+  box-shadow: 0 0 0 10px #1a1a1a, 0 25px 80px rgba(0,0,0,0.35);
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.phone-notch {
+  height: 44px;
+  background: var(--surface);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 4px;
+  position: relative;
+  z-index: 10;
+  flex-shrink: 0;
+}
+.notch-pill {
+  width: 120px;
+  height: 28px;
+  background: #1a1a1a;
+  border-radius: 14px;
+  position: relative;
+}
+.notch-cam {
+  width: 10px;
+  height: 10px;
+  background: #2a2a3a;
+  border-radius: 50%;
+  position: absolute;
+  right: 18px;
+  top: 9px;
+}
+
+.phone-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+}
+
+.phone-home {
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: var(--surface);
+}
+.home-bar {
+  width: 134px;
+  height: 5px;
+  background: var(--fg-3);
+  border-radius: 3px;
+}
+
+/* Screens */
+.screen {
+  display: none;
+  min-height: 100%;
+  flex-direction: column;
+}
+.screen.active {
+  display: flex;
+}
+
+/* Status bar */
+.status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 20px 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--fg-2);
+  font-family: var(--font-mono);
+  flex-shrink: 0;
+}
+.status-right {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.battery {
+  width: 22px;
+  height: 11px;
+  border: 1.5px solid var(--fg-2);
+  border-radius: 2px;
+  position: relative;
+  display: inline-block;
+}
+.battery::after {
+  content: '';
+  position: absolute;
+  right: -4px;
+  top: 2px;
+  width: 2px;
+  height: 5px;
+  background: var(--fg-2);
+  border-radius: 0 1px 1px 0;
+}
+.battery-fill {
+  position: absolute;
+  left: 1px;
+  top: 1px;
+  bottom: 1px;
+  width: 70%;
+  background: var(--success);
+  border-radius: 1px;
+}
+
+/* Splash / Landing */
+.splash-screen {
+  background: linear-gradient(160deg, var(--brand-dark) 0%, var(--brand) 50%, var(--brand-light) 100%);
+  color: white;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 40px 28px;
+  gap: 16px;
+}
+.splash-logo {
+  font-size: 42px;
+  font-weight: 700;
+  letter-spacing: -1px;
+  margin-bottom: 4px;
+}
+.splash-tagline {
+  font-size: 16px;
+  opacity: 0.85;
+  max-width: 260px;
+  line-height: 1.5;
+}
+.splash-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 32px;
+  width: 100%;
+}
+.splash-stat-num {
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 700;
+}
+.splash-stat-label {
+  font-size: 11px;
+  opacity: 0.7;
+  margin-top: 2px;
+}
+.splash-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  margin-top: 40px;
+}
+
+/* Buttons */
+.btn {
+  padding: 14px 24px;
+  border-radius: 12px;
+  border: none;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.1s, opacity 0.15s;
+  text-align: center;
+}
+.btn:active { transform: scale(0.97); }
+.btn-primary {
+  background: var(--brand);
+  color: white;
+}
+.btn-secondary {
+  background: rgba(255,255,255,0.15);
+  color: white;
+  border: 1.5px solid rgba(255,255,255,0.3);
+}
+.btn-outline {
+  background: transparent;
+  color: var(--brand);
+  border: 1.5px solid var(--brand);
+}
+.btn-solid {
+  background: var(--brand);
+  color: white;
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--fg-2);
+  padding: 8px;
+  font-size: 13px;
+}
+.btn-danger {
+  background: var(--danger);
+  color: white;
+}
+.btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.btn-block { width: 100%; }
+
+/* Form elements */
+.form-group {
+  margin-bottom: 16px;
+}
+.form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--fg-2);
+  margin-bottom: 6px;
+}
+.form-input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--surface-3);
+  border-radius: 10px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  background: var(--surface);
+  color: var(--fg);
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.15s;
+}
+.form-input:focus {
+  border-color: var(--brand);
+}
+.form-input::placeholder {
+  color: var(--fg-3);
+}
+
+/* Nav bar */
+.nav-header {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.nav-back {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: none;
+  background: var(--surface-2);
+  color: var(--fg);
+  cursor: pointer;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.nav-title {
+  font-size: 17px;
+  font-weight: 600;
+  flex: 1;
+}
+
+/* Page padding */
+.page-body {
+  padding: 0 20px 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Dashboard */
+.dash-greeting {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.dash-sub {
+  font-size: 13px;
+  color: var(--fg-2);
+  margin-bottom: 20px;
+}
+.wallet-card {
+  background: linear-gradient(135deg, var(--brand-dark), var(--brand));
+  color: white;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+.wallet-label {
+  font-size: 12px;
+  opacity: 0.7;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.wallet-amount {
+  font-family: var(--font-mono);
+  font-size: 32px;
+  font-weight: 700;
+  margin: 6px 0;
+}
+.wallet-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+.wallet-tier {
+  background: rgba(255,255,255,0.2);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.wallet-rate {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.quick-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 8px;
+  background: var(--surface-2);
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-body);
+  color: var(--fg);
+}
+.quick-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+.quick-icon.green { background: #dcfce7; color: var(--success); }
+.quick-icon.blue { background: #dbeafe; color: #2563eb; }
+.quick-icon.amber { background: #fef3c7; color: #d97706; }
+.quick-label { font-size: 11px; font-weight: 500; }
+
+.section-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+/* Loan history items */
+.loan-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--surface-3);
+  cursor: pointer;
+}
+.loan-item:last-child { border: none; }
+.loan-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.loan-icon.active { background: #dcfce7; color: var(--success); }
+.loan-icon.closed { background: var(--surface-2); color: var(--fg-3); }
+.loan-info { flex: 1; min-width: 0; }
+.loan-name { font-size: 14px; font-weight: 500; }
+.loan-meta { font-size: 12px; color: var(--fg-2); margin-top: 2px; }
+.loan-amount {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: right;
+}
+
+/* KYC */
+.kyc-step {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  background: var(--surface-2);
+  border-radius: 12px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: border-color 0.15s;
+}
+.kyc-step:hover { border-color: var(--brand); }
+.kyc-step.done { opacity: 0.6; }
+.kyc-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.kyc-num.pending { background: var(--brand); color: white; }
+.kyc-num.done { background: var(--success); color: white; }
+.kyc-text { flex: 1; }
+.kyc-title { font-size: 14px; font-weight: 500; }
+.kyc-desc { font-size: 12px; color: var(--fg-2); margin-top: 2px; }
+.kyc-check { color: var(--success); font-size: 18px; }
+
+/* Offer screen */
+.offer-card {
+  background: var(--surface-2);
+  border-radius: 16px;
+  padding: 24px 20px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+.offer-badge {
+  display: inline-block;
+  background: var(--brand);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+.offer-amount {
+  font-family: var(--font-mono);
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--brand);
+}
+.offer-detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--surface-3);
+  font-size: 14px;
+}
+.offer-detail-row:last-child { border: none; }
+.offer-detail-label { color: var(--fg-2); }
+.offer-detail-value { font-weight: 600; }
+
+/* Schedule */
+.schedule-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--surface-3);
+  font-size: 13px;
+}
+.schedule-num {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: var(--surface-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+.schedule-date { flex: 1; color: var(--fg-2); }
+.schedule-amt {
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+/* Bottom tabs */
+.tab-bar {
+  display: flex;
+  border-top: 1px solid var(--surface-3);
+  padding: 8px 0 4px;
+  flex-shrink: 0;
+  background: var(--surface);
+}
+.tab-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 4px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--fg-3);
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 500;
+}
+.tab-item.active { color: var(--brand); }
+.tab-icon { font-size: 20px; }
+
+/* Ladder */
+.ladder-track {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.ladder-tier {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+}
+.ladder-tier.current {
+  background: var(--brand);
+  color: white;
+  font-weight: 600;
+}
+.ladder-tier.locked {
+  background: var(--surface-2);
+  color: var(--fg-3);
+}
+.ladder-tier.passed {
+  background: var(--surface-2);
+  color: var(--fg-2);
+}
+.ladder-num {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  width: 24px;
+}
+.ladder-name { flex: 1; }
+.ladder-max { font-family: var(--font-mono); font-size: 12px; }
+
+/* Toast */
+.toast {
+  position: absolute;
+  bottom: 60px;
+  left: 20px;
+  right: 20px;
+  background: var(--fg);
+  color: var(--surface);
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+  z-index: 100;
+  animation: toastIn 0.3s ease, toastOut 0.3s ease 2.2s forwards;
+}
+@keyframes toastIn { from { opacity: 0; transform: translateY(20px); } }
+@keyframes toastOut { to { opacity: 0; transform: translateY(20px); } }
+
+/* Pipeline animation */
+.pipeline-step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  font-size: 13px;
+  color: var(--fg-3);
+  transition: color 0.3s;
+}
+.pipeline-step.active { color: var(--brand); font-weight: 500; }
+.pipeline-step.done { color: var(--success); }
+.pipeline-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--surface-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  flex-shrink: 0;
+  transition: all 0.3s;
+}
+.pipeline-step.active .pipeline-dot {
+  border-color: var(--brand);
+  background: var(--brand);
+  color: white;
+  animation: pulse 1s infinite;
+}
+.pipeline-step.done .pipeline-dot {
+  border-color: var(--success);
+  background: var(--success);
+  color: white;
+}
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(52,211,153,0.4); }
+  50% { box-shadow: 0 0 0 6px rgba(52,211,153,0); }
+}
+
+/* Confetti burst */
+.confetti-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 50;
+}
+</style>
+
+<div class="phone">
+  <div class="phone-notch">
+    <div class="notch-pill"><div class="notch-cam"></div></div>
+  </div>
+
+  <div class="phone-content">
+
+    <!-- SPLASH -->
+    <div class="screen splash-screen active" id="splash">
+      <div class="splash-logo">sharp sharp</div>
+      <div class="splash-tagline">Instant loans. Smart rates. Built for Nigeria.</div>
+
+      <div class="splash-stats">
+        <div><div class="splash-stat-num">5 min</div><div class="splash-stat-label">To offer</div></div>
+        <div><div class="splash-stat-num">3%</div><div class="splash-stat-label">From/month</div></div>
+        <div><div class="splash-stat-num">N1M</div><div class="splash-stat-label">Up to</div></div>
+      </div>
+
+      <div class="splash-actions">
+        <button class="btn btn-secondary btn-block" onclick="go('signup')">Get Started</button>
+        <button class="btn btn-ghost" style="color:rgba(255,255,255,0.7)" onclick="go('login')">Already have an account? Log in</button>
+      </div>
+    </div>
+
+    <!-- LOGIN -->
+    <div class="screen" id="login">
+      <div class="nav-header">
+        <button class="nav-back" onclick="go('splash')">&larr;</button>
+        <div class="nav-title">Log In</div>
+      </div>
+      <div class="page-body">
+        <div style="text-align:center;margin-bottom:28px">
+          <div style="font-size:28px;font-weight:700;color:var(--brand)">sharp sharp</div>
+          <div style="font-size:13px;color:var(--fg-2);margin-top:4px">Welcome back</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone Number</label>
+          <input class="form-input" type="tel" placeholder="0801 234 5678" value="0801 234 5678">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input class="form-input" type="password" placeholder="Enter password" value="********">
+        </div>
+        <button class="btn btn-solid btn-block" style="margin-top:8px" onclick="handleLogin()">Log In</button>
+        <div style="text-align:center;margin-top:16px;font-size:13px;color:var(--fg-2)">
+          No account? <a href="#" style="color:var(--brand);font-weight:500" onclick="event.preventDefault();go('signup')">Sign up</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIGNUP -->
+    <div class="screen" id="signup">
+      <div class="nav-header">
+        <button class="nav-back" onclick="go('splash')">&larr;</button>
+        <div class="nav-title">Create Account</div>
+      </div>
+      <div class="page-body">
+        <div class="form-group">
+          <label class="form-label">First Name</label>
+          <input class="form-input" id="signup-first" placeholder="e.g. Chiroma" value="">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Last Name</label>
+          <input class="form-input" id="signup-last" placeholder="e.g. Musa" value="">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone Number</label>
+          <input class="form-input" id="signup-phone" type="tel" placeholder="0801 234 5678" value="">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input class="form-input" type="password" placeholder="Min 8 characters" value="">
+        </div>
+        <button class="btn btn-solid btn-block" style="margin-top:8px" onclick="handleSignup()">Continue</button>
+        <div style="text-align:center;margin-top:16px;font-size:13px;color:var(--fg-2)">
+          Have an account? <a href="#" style="color:var(--brand);font-weight:500" onclick="event.preventDefault();go('login')">Log in</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- KYC -->
+    <div class="screen" id="kyc">
+      <div class="nav-header">
+        <button class="nav-back" onclick="go('signup')">&larr;</button>
+        <div class="nav-title">Verify Your Identity</div>
+      </div>
+      <div class="page-body">
+        <div style="font-size:13px;color:var(--fg-2);margin-bottom:20px">Complete these steps to unlock your loan eligibility. All borrowers go through the same path.</div>
+
+        <div class="kyc-step" onclick="kycStep(this, 1)" id="kyc1">
+          <div class="kyc-num pending">1</div>
+          <div class="kyc-text">
+            <div class="kyc-title">BVN Verification</div>
+            <div class="kyc-desc">Link your Bank Verification Number</div>
+          </div>
+        </div>
+        <div class="kyc-step" onclick="kycStep(this, 2)" id="kyc2">
+          <div class="kyc-num pending">2</div>
+          <div class="kyc-text">
+            <div class="kyc-title">NIN Verification</div>
+            <div class="kyc-desc">National Identity Number check</div>
+          </div>
+        </div>
+        <div class="kyc-step" onclick="kycStep(this, 3)" id="kyc3">
+          <div class="kyc-num pending">3</div>
+          <div class="kyc-text">
+            <div class="kyc-title">Selfie Verification</div>
+            <div class="kyc-desc">Liveness check with your camera</div>
+          </div>
+        </div>
+        <div class="kyc-step" onclick="kycStep(this, 4)" id="kyc4">
+          <div class="kyc-num pending">4</div>
+          <div class="kyc-text">
+            <div class="kyc-title">Link Bank Account</div>
+            <div class="kyc-desc">Connect via Mono for statement analysis</div>
+          </div>
+        </div>
+
+        <div style="flex:1"></div>
+        <button class="btn btn-solid btn-block" id="kyc-continue" disabled onclick="go('dashboard')">Complete All Steps First</button>
+      </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="screen" id="dashboard">
+      <div class="status-bar">
+        <span>9:41</span>
+        <span class="status-right">
+          <span style="font-size:10px">MTN</span>
+          <span style="font-size:10px">5G</span>
+          <span class="battery"><span class="battery-fill"></span></span>
+        </span>
+      </div>
+      <div class="page-body" style="padding-top:4px">
+        <div class="dash-greeting" id="dash-greeting">Hello</div>
+        <div class="dash-sub">Your credit ladder: Silver (Tier 2)</div>
+
+        <div class="wallet-card">
+          <div class="wallet-label">Available Loan Amount</div>
+          <div class="wallet-amount">N50,000</div>
+          <div class="wallet-row">
+            <div class="wallet-tier">Silver - Tier 2</div>
+            <div class="wallet-rate">From 5.2%/mo</div>
+          </div>
+        </div>
+
+        <div class="quick-actions">
+          <button class="quick-btn" onclick="go('apply')">
+            <div class="quick-icon green">N</div>
+            <span class="quick-label">Apply</span>
+          </button>
+          <button class="quick-btn" onclick="go('ladder')">
+            <div class="quick-icon blue">&#9650;</div>
+            <span class="quick-label">Ladder</span>
+          </button>
+          <button class="quick-btn" onclick="go('profile')">
+            <div class="quick-icon amber">&#9881;</div>
+            <span class="quick-label">Profile</span>
+          </button>
+        </div>
+
+        <div class="section-title">Loan History</div>
+        <div class="loan-item" onclick="go('loandetail')">
+          <div class="loan-icon active">&#9679;</div>
+          <div class="loan-info">
+            <div class="loan-name">Active Loan</div>
+            <div class="loan-meta">Installment - 30 days left</div>
+          </div>
+          <div class="loan-amount">N35,000</div>
+        </div>
+        <div class="loan-item">
+          <div class="loan-icon closed">&#10003;</div>
+          <div class="loan-info">
+            <div class="loan-name">Loan #SS-0042</div>
+            <div class="loan-meta">Paid off - Sep 2026</div>
+          </div>
+          <div class="loan-amount">N20,000</div>
+        </div>
+        <div class="loan-item">
+          <div class="loan-icon closed">&#10003;</div>
+          <div class="loan-info">
+            <div class="loan-name">Loan #SS-0031</div>
+            <div class="loan-meta">Paid off - Jul 2026</div>
+          </div>
+          <div class="loan-amount">N15,000</div>
+        </div>
+      </div>
+
+      <div class="tab-bar">
+        <button class="tab-item active"><span class="tab-icon">&#8962;</span>Home</button>
+        <button class="tab-item" onclick="go('apply')"><span class="tab-icon">&#43;</span>Apply</button>
+        <button class="tab-item" onclick="go('ladder')"><span class="tab-icon">&#9650;</span>Ladder</button>
+        <button class="tab-item" onclick="go('profile')"><span class="tab-icon">&#9679;</span>Profile</button>
+      </div>
+    </div>
+
+    <!-- APPLY -->
+    <div class="screen" id="apply">
+      <div class="nav-header">
+        <button class="nav-back" onclick="go('dashboard')">&larr;</button>
+        <div class="nav-title">Apply for a Loan</div>
+      </div>
+      <div class="page-body">
+        <div class="form-group">
+          <label class="form-label">Loan Amount (N)</label>
+          <input class="form-input" type="text" id="loan-amt" value="40,000" style="font-family:var(--font-mono);font-size:22px;font-weight:700;text-align:center">
+          <div id="apply-max-label" style="font-size:11px;color:var(--fg-3);margin-top:4px;text-align:center">Max: N50,000 at Silver tier</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Loan Tenure</label>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-outline" style="flex:1;padding:10px;font-size:13px" onclick="selectTenure(this)">30 days</button>
+            <button class="btn btn-solid" style="flex:1;padding:10px;font-size:13px" onclick="selectTenure(this)">60 days</button>
+            <button class="btn btn-outline" style="flex:1;padding:10px;font-size:13px" onclick="selectTenure(this)">90 days</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Loan Purpose</label>
+          <input class="form-input" placeholder="e.g. Business expenses" value="Business expenses">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Disbursement Account</label>
+          <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--surface-2);border-radius:10px">
+            <div style="font-weight:600;font-size:14px">GTBank</div>
+            <div style="flex:1;font-family:var(--font-mono);font-size:13px;color:var(--fg-2)">0123456789</div>
+            <div style="font-size:12px;color:var(--success)">Linked</div>
+          </div>
+        </div>
+
+        <div id="apply-summary" style="background:var(--surface-2);border-radius:12px;padding:14px;margin-top:8px;margin-bottom:16px">
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px">
+            <span style="color:var(--fg-2)" id="apply-rate-label">Est. Interest (5.2%/mo)</span>
+            <span style="font-family:var(--font-mono);font-weight:600" id="apply-interest">N4,160</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px">
+            <span style="color:var(--fg-2)">Processing fee</span>
+            <span style="font-family:var(--font-mono);font-weight:600">N0</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:14px;padding-top:8px;border-top:1px solid var(--surface-3)">
+            <span style="font-weight:600">Total repayment</span>
+            <span style="font-family:var(--font-mono);font-weight:700;color:var(--brand)" id="apply-total">N44,160</span>
+          </div>
+        </div>
+
+        <button class="btn btn-solid btn-block" onclick="submitApplication()">Submit Application</button>
+      </div>
+    </div>
+
+    <!-- PIPELINE (processing animation) -->
+    <div class="screen" id="pipeline">
+      <div class="nav-header">
+        <div class="nav-title" style="text-align:center;width:100%">Processing Application</div>
+      </div>
+      <div class="page-body" style="padding-top:8px">
+        <div style="text-align:center;margin-bottom:20px">
+          <div style="font-size:13px;color:var(--fg-2)">Single-path underwriting for all borrowers</div>
+        </div>
+
+        <div id="pipeline-steps">
+          <div class="pipeline-step" data-step="0"><div class="pipeline-dot"></div>KYC Verification</div>
+          <div class="pipeline-step" data-step="1"><div class="pipeline-dot"></div>Fraud Detection (Device + Graph)</div>
+          <div class="pipeline-step" data-step="2"><div class="pipeline-dot"></div>Bank Statement Analysis</div>
+          <div class="pipeline-step" data-step="3"><div class="pipeline-dot"></div>Income Estimation</div>
+          <div class="pipeline-step" data-step="4"><div class="pipeline-dot"></div>Credit Scoring (Single Model)</div>
+          <div class="pipeline-step" data-step="5"><div class="pipeline-dot"></div>Credit Bureau Check</div>
+          <div class="pipeline-step" data-step="6"><div class="pipeline-dot"></div>Ladder-Based Pricing</div>
+          <div class="pipeline-step" data-step="7"><div class="pipeline-dot"></div>Generating Offer</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OFFER -->
+    <div class="screen" id="offer">
+      <div class="nav-header">
+        <button class="nav-back" onclick="go('dashboard')">&larr;</button>
+        <div class="nav-title">Your Loan Offer</div>
+      </div>
+      <div class="page-body">
+        <div class="offer-card">
+          <div class="offer-badge">Approved</div>
+          <div class="offer-amount" id="offer-amt">N40,000</div>
+          <div style="font-size:12px;color:var(--fg-2);margin-top:4px">Offer expires in 72 hours</div>
+        </div>
+
+        <div style="margin-bottom:20px">
+          <div class="offer-detail-row">
+            <span class="offer-detail-label">Loan Type</span>
+            <span class="offer-detail-value">Installment</span>
+          </div>
+          <div class="offer-detail-row">
+            <span class="offer-detail-label">Tenure</span>
+            <span class="offer-detail-value">60 days</span>
+          </div>
+          <div class="offer-detail-row">
+            <span class="offer-detail-label">Monthly Rate</span>
+            <span class="offer-detail-value" id="offer-rate">5.2%</span>
+          </div>
+          <div class="offer-detail-row">
+            <span class="offer-detail-label">Credit Score</span>
+            <span class="offer-detail-value">620 (Band B)</span>
+          </div>
+          <div class="offer-detail-row">
+            <span class="offer-detail-label">Ladder Tier</span>
+            <span class="offer-detail-value" id="offer-tier">Silver (Tier 2)</span>
+          </div>
+          <div class="offer-detail-row">
+            <span class="offer-detail-label">Ladder Discount</span>
+            <span class="offer-detail-value" id="offer-discount" style="color:var(--success)">-0.5%</span>
+          </div>
+          <div class="offer-detail-row">
+            <span class="offer-detail-label">Total Interest</span>
+            <span class="offer-detail-value" id="offer-interest">N4,160</span>
+          </div>
+          <div class="offer-detail-row">
+            <span class="offer-detail-label">Installments</span>
+            <span class="offer-detail-value" id="offer-installments">2 x N22,080</span>
+          </div>
+          <div class="offer-detail-row">
+            <span class="offer-detail-label">Total Repayment</span>
+            <span class="offer-detail-value" id="offer-total" style="font-family:var(--font-mono)">N44,160</span>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px">
+          <button class="btn btn-outline" style="flex:1" onclick="go('dashboard')">Decline</button>
+          <button class="btn btn-solid" style="flex:2" onclick="acceptOffer()">Accept Offer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DISBURSED (success) -->
+    <div class="screen" id="disbursed">
+      <div class="page-body" style="justify-content:center;align-items:center;text-align:center;padding:40px 28px">
+        <div class="confetti-container" id="confetti"></div>
+        <div style="width:72px;height:72px;border-radius:50%;background:var(--success);display:flex;align-items:center;justify-content:center;margin-bottom:20px">
+          <span style="color:white;font-size:32px">&#10003;</span>
+        </div>
+        <div style="font-size:24px;font-weight:700;margin-bottom:8px">Loan Disbursed!</div>
+        <div style="font-size:14px;color:var(--fg-2);margin-bottom:4px" id="disbursed-sent">N40,000 sent to</div>
+        <div style="font-family:var(--font-mono);font-size:16px;font-weight:600;margin-bottom:24px">GTBank - 0123456789</div>
+        <div style="background:var(--surface-2);border-radius:12px;padding:14px 20px;width:100%;margin-bottom:24px">
+          <div style="font-size:12px;color:var(--fg-2)">Reference</div>
+          <div style="font-family:var(--font-mono);font-size:14px;font-weight:600;margin-top:4px" id="disbursed-ref">MC-2026-10-0058</div>
+        </div>
+        <button class="btn btn-solid btn-block" onclick="populateLoanDetail(); go('loandetail')">View Loan Details</button>
+        <button class="btn btn-ghost btn-block" onclick="populateLoanDetail(); go('dashboard')">Back to Dashboard</button>
+      </div>
+    </div>
+
+    <!-- LOAN DETAIL -->
+    <div class="screen" id="loandetail">
+      <div class="nav-header">
+        <button class="nav-back" onclick="go('dashboard')">&larr;</button>
+        <div class="nav-title">Loan Details</div>
+      </div>
+      <div class="page-body">
+        <div style="text-align:center;margin-bottom:20px">
+          <div style="font-size:12px;color:var(--fg-2)">Outstanding Balance</div>
+          <div style="font-family:var(--font-mono);font-size:32px;font-weight:700;color:var(--brand);margin:4px 0">N44,160</div>
+          <div style="display:inline-block;background:#dcfce7;color:var(--success);padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600">Current - 0 DPD</div>
+        </div>
+
+        <div class="section-title">Repayment Schedule</div>
+        <div class="schedule-item">
+          <div class="schedule-num">1</div>
+          <div class="schedule-date">Nov 14, 2026</div>
+          <div class="schedule-amt">N22,080</div>
+        </div>
+        <div class="schedule-item">
+          <div class="schedule-num">2</div>
+          <div class="schedule-date">Dec 14, 2026</div>
+          <div class="schedule-amt">N22,080</div>
+        </div>
+
+        <div style="background:var(--surface-2);border-radius:12px;padding:14px;margin-top:16px;margin-bottom:16px">
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px">
+            <span style="color:var(--fg-2)">Principal</span>
+            <span style="font-family:var(--font-mono)">N40,000</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px">
+            <span style="color:var(--fg-2)">Interest</span>
+            <span style="font-family:var(--font-mono)">N4,160</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px">
+            <span style="color:var(--fg-2)">Paid So Far</span>
+            <span style="font-family:var(--font-mono);color:var(--success)">N0</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:14px;padding-top:8px;border-top:1px solid var(--surface-3)">
+            <span style="font-weight:600">Total Due</span>
+            <span style="font-family:var(--font-mono);font-weight:700">N44,160</span>
+          </div>
+        </div>
+
+        <button class="btn btn-solid btn-block" id="pay-btn" onclick="payInstallment()">Pay Next Installment (N22,080)</button>
+        <button class="btn btn-ghost btn-block" onclick="go('dashboard')">Back to Dashboard</button>
+      </div>
+    </div>
+
+    <!-- LOAN CLEARED -->
+    <div class="screen" id="loanclear">
+      <div class="page-body" style="justify-content:center;align-items:center;text-align:center;padding:40px 28px">
+        <div class="confetti-container" id="confetti-clear"></div>
+        <div style="width:72px;height:72px;border-radius:50%;background:var(--success);display:flex;align-items:center;justify-content:center;margin-bottom:20px">
+          <span style="color:white;font-size:32px">&#10003;</span>
+        </div>
+        <div style="font-size:24px;font-weight:700;margin-bottom:8px">Loan Cleared!</div>
+        <div style="font-size:14px;color:var(--fg-2);margin-bottom:4px" id="clear-loan-id">Loan fully repaid</div>
+        <div style="font-family:var(--font-mono);font-size:16px;font-weight:600;margin-bottom:24px" id="clear-total-paid"></div>
+
+        <div style="background:var(--surface-2);border-radius:12px;padding:16px 20px;width:100%;margin-bottom:16px">
+          <div style="font-size:14px;font-weight:600;color:var(--brand);margin-bottom:8px">Ladder Promotion Check</div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px">
+            <span style="color:var(--fg-2)">Loans repaid on time</span>
+            <span style="font-weight:600">3 of 3</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px">
+            <span style="color:var(--fg-2)">Consecutive on-time</span>
+            <span style="font-weight:600">3</span>
+          </div>
+          <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--surface-3);text-align:center">
+            <div style="font-size:15px;font-weight:700;color:var(--brand)">Promoted to Gold (Tier 3)!</div>
+            <div style="font-size:12px;color:var(--fg-2);margin-top:4px">Max loan: N100,000 | Rate discount: -1.0%</div>
+          </div>
+        </div>
+
+        <button class="btn btn-solid btn-block" onclick="promoteLadder(); go('dashboard')">Back to Dashboard</button>
+      </div>
+    </div>
+
+    <!-- LADDER -->
+    <div class="screen" id="ladder">
+      <div class="nav-header">
+        <button class="nav-back" onclick="go('dashboard')">&larr;</button>
+        <div class="nav-title">Credit Ladder</div>
+      </div>
+      <div class="page-body">
+        <div style="font-size:13px;color:var(--fg-2);margin-bottom:16px">The ladder is how risk is segmented. Repay on time to climb tiers and unlock larger amounts at lower rates. No persona routing -- your history is your score.</div>
+
+        <div class="ladder-track">
+          <div class="ladder-tier passed"><div class="ladder-num">1</div><div class="ladder-name">Bronze</div><div class="ladder-max">N20K</div></div>
+          <div class="ladder-tier current"><div class="ladder-num">2</div><div class="ladder-name">Silver (You)</div><div class="ladder-max">N50K</div></div>
+          <div class="ladder-tier locked"><div class="ladder-num">3</div><div class="ladder-name">Gold</div><div class="ladder-max">N100K</div></div>
+          <div class="ladder-tier locked"><div class="ladder-num">4</div><div class="ladder-name">Platinum</div><div class="ladder-max">N200K</div></div>
+          <div class="ladder-tier locked"><div class="ladder-num">5</div><div class="ladder-name">Diamond</div><div class="ladder-max">N400K</div></div>
+          <div class="ladder-tier locked"><div class="ladder-num">6</div><div class="ladder-name">Elite</div><div class="ladder-max">N700K</div></div>
+          <div class="ladder-tier locked"><div class="ladder-num">7</div><div class="ladder-name">Supreme</div><div class="ladder-max">N1M</div></div>
+        </div>
+
+        <div style="background:var(--surface-2);border-radius:12px;padding:14px">
+          <div style="font-size:13px;font-weight:600;margin-bottom:8px">Next tier: Gold</div>
+          <div style="font-size:12px;color:var(--fg-2)">Requires: 3 loans repaid, 2 consecutive on-time</div>
+          <div style="margin-top:10px;height:6px;background:var(--surface-3);border-radius:3px;overflow:hidden">
+            <div style="width:66%;height:100%;background:var(--brand);border-radius:3px"></div>
+          </div>
+          <div style="font-size:11px;color:var(--fg-3);margin-top:4px">2 of 3 loans completed</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="screen" id="profile">
+      <div class="nav-header">
+        <button class="nav-back" onclick="go('dashboard')">&larr;</button>
+        <div class="nav-title">Profile</div>
+      </div>
+      <div class="page-body">
+        <div style="text-align:center;margin-bottom:24px">
+          <div id="profile-initials" style="width:64px;height:64px;border-radius:50%;background:var(--brand);color:white;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:24px;font-weight:700"></div>
+          <div id="profile-name" style="font-size:18px;font-weight:600"></div>
+          <div id="profile-phone" style="font-size:13px;color:var(--fg-2)"></div>
+        </div>
+
+        <div class="section-title">Personal Details</div>
+        <div style="background:var(--surface-2);border-radius:12px;padding:14px;margin-bottom:16px">
+          <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:13px">
+            <span style="color:var(--fg-2)">BVN</span><span>22*****89</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:13px;border-top:1px solid var(--surface-3)">
+            <span style="color:var(--fg-2)">NIN</span><span>70*****12</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:13px;border-top:1px solid var(--surface-3)">
+            <span style="color:var(--fg-2)">KYC Status</span><span style="color:var(--success)">Verified</span>
+          </div>
+        </div>
+
+        <div class="section-title">Employment</div>
+        <div style="background:var(--surface-2);border-radius:12px;padding:14px;margin-bottom:16px">
+          <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:13px">
+            <span style="color:var(--fg-2)">Status</span><span>Employed</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:13px;border-top:1px solid var(--surface-3)">
+            <span style="color:var(--fg-2)">Ladder Tier</span><span>Silver (Tier 2)</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:13px;border-top:1px solid var(--surface-3)">
+            <span style="color:var(--fg-2)">Employer</span><span>Zenith Corp</span>
+          </div>
+        </div>
+
+        <div class="section-title">Linked Bank</div>
+        <div style="background:var(--surface-2);border-radius:12px;padding:14px;margin-bottom:16px">
+          <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:13px">
+            <span style="color:var(--fg-2)">Bank</span><span>GTBank</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:13px;border-top:1px solid var(--surface-3)">
+            <span style="color:var(--fg-2)">Account</span><span style="font-family:var(--font-mono)">0123456789</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:13px;border-top:1px solid var(--surface-3)">
+            <span style="color:var(--fg-2)">Provider</span><span>Mono</span>
+          </div>
+        </div>
+
+        <button class="btn btn-ghost btn-block" style="color:var(--danger)" onclick="go('splash')">Log Out</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="phone-home"><div class="home-bar"></div></div>
+</div>
+
+<script>
+const navHistory = ['splash'];
+let loanCounter = 58;
+
+const TIERS = [
+  { name: 'Bronze', tier: 1, max: 20000, discount: 0, rate: 6.2, req: 'New user' },
+  { name: 'Silver', tier: 2, max: 50000, discount: 0.5, rate: 5.2, req: '1 loan repaid on time' },
+  { name: 'Gold', tier: 3, max: 100000, discount: 1.0, rate: 4.2, req: '3 loans, 2 consecutive on-time' },
+  { name: 'Platinum', tier: 4, max: 200000, discount: 1.5, rate: 3.7, req: '5 loans, 4 consecutive on-time' },
+  { name: 'Diamond', tier: 5, max: 400000, discount: 2.0, rate: 3.2, req: '8 loans, 6 consecutive on-time' },
+  { name: 'Elite', tier: 6, max: 700000, discount: 2.5, rate: 2.7, req: '12 loans, 10 consecutive on-time' },
+  { name: 'Supreme', tier: 7, max: 1000000, discount: 3.0, rate: 2.2, req: '18 loans, 15 consecutive on-time' },
+];
+
+let state = {
+  ladderIdx: 1,
+  loansCompleted: 2,
+  consecutiveOnTime: 2,
+  activeLoan: null,
+  firstName: '',
+  lastName: '',
+  phone: '',
+};
+
+function handleSignup() {
+  state.firstName = document.getElementById('signup-first').value.trim() || 'User';
+  state.lastName = document.getElementById('signup-last').value.trim() || '';
+  state.phone = document.getElementById('signup-phone').value.trim() || '0801 234 5678';
+  applyUserInfo();
+  go('kyc');
+}
+
+function handleLogin() {
+  if (!state.firstName) {
+    state.firstName = 'Returning';
+    state.lastName = 'User';
+    state.phone = '0801 234 5678';
+    applyUserInfo();
+  }
+  go('dashboard');
+}
+
+function applyUserInfo() {
+  const f = state.firstName;
+  const l = state.lastName;
+  const initials = (f.charAt(0) + (l ? l.charAt(0) : '')).toUpperCase();
+  const fullName = l ? f + ' ' + l : f;
+  const phone = state.phone.replace(/^0/, '+234 ');
+
+  document.getElementById('dash-greeting').textContent = 'Hello, ' + f;
+  document.getElementById('profile-initials').textContent = initials;
+  document.getElementById('profile-name').textContent = fullName;
+  document.getElementById('profile-phone').textContent = phone;
+}
+
+function fmt(n) { return 'N' + n.toLocaleString(); }
+
+function tier() { return TIERS[state.ladderIdx]; }
+
+function calcLoan(amount, tenureDays) {
+  const t = tier();
+  const months = Math.max(tenureDays / 30, 1);
+  const rate = t.rate / 100;
+  const interest = Math.round(amount * rate * months);
+  const total = amount + interest;
+  const installments = tenureDays <= 30 ? 1 : Math.round(tenureDays / 30);
+  const perInstallment = Math.round(total / installments);
+  return { amount, tenureDays, rate: t.rate, interest, total, installments, perInstallment };
+}
+
+function go(screenId) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById(screenId);
+  if (target) {
+    target.classList.add('active');
+    target.scrollTop = 0;
+  }
+  navHistory.push(screenId);
+
+  if (screenId === 'apply') refreshApply();
+  if (screenId === 'pipeline') runPipeline();
+  if (screenId === 'disbursed') spawnConfetti();
+  if (screenId === 'loanclear') spawnConfetti('confetti-clear');
+}
+
+function refreshApply() {
+  const t = tier();
+  document.getElementById('apply-max-label').textContent = 'Max: ' + fmt(t.max) + ' at ' + t.name + ' tier';
+  document.getElementById('apply-rate-label').textContent = 'Est. Interest (' + t.rate + '%/mo)';
+  const amtStr = document.getElementById('loan-amt').value.replace(/[^0-9]/g, '');
+  let amt = parseInt(amtStr) || t.max;
+  if (amt > t.max) amt = t.max;
+  document.getElementById('loan-amt').value = amt.toLocaleString();
+  const loan = calcLoan(amt, 60);
+  document.getElementById('apply-interest').textContent = fmt(loan.interest);
+  document.getElementById('apply-total').textContent = fmt(loan.total);
+}
+
+function submitApplication() {
+  const amtStr = document.getElementById('loan-amt').value.replace(/[^0-9]/g, '');
+  let amt = parseInt(amtStr) || tier().max;
+  if (amt > tier().max) amt = tier().max;
+  state.activeLoan = calcLoan(amt, 60);
+  state.activeLoan.paid = 0;
+  state.activeLoan.installmentsPaid = 0;
+  loanCounter++;
+  state.activeLoan.ref = 'SS-2026-10-' + String(loanCounter).padStart(4, '0');
+  state.activeLoan.id = '#SS-' + String(loanCounter).padStart(4, '0');
+  go('pipeline');
+}
+
+function populateOffer() {
+  const l = state.activeLoan;
+  const t = tier();
+  document.getElementById('offer-amt').textContent = fmt(l.amount);
+  document.getElementById('offer-rate').textContent = t.rate + '%';
+  document.getElementById('offer-tier').textContent = t.name + ' (Tier ' + t.tier + ')';
+  document.getElementById('offer-discount').textContent = '-' + t.discount + '%';
+  document.getElementById('offer-interest').textContent = fmt(l.interest);
+  document.getElementById('offer-installments').textContent = l.installments + ' x ' + fmt(l.perInstallment);
+  document.getElementById('offer-total').textContent = fmt(l.total);
+}
+
+function acceptOffer() {
+  const l = state.activeLoan;
+  document.getElementById('disbursed-sent').textContent = fmt(l.amount) + ' sent to';
+  document.getElementById('disbursed-ref').textContent = l.ref;
+  go('disbursed');
+}
+
+function populateLoanDetail() {
+  const l = state.activeLoan;
+  document.querySelector('#loandetail .nav-title').textContent = 'Loan ' + l.id;
+
+  const balanceEl = document.querySelector('#loandetail [style*="font-size:32px"]');
+  balanceEl.textContent = fmt(l.total - l.paid);
+
+  const badge = document.querySelector('#loandetail [style*="dcfce7"]');
+  badge.textContent = 'Current - 0 DPD';
+  badge.style.background = '#dcfce7';
+  badge.style.color = 'var(--success)';
+
+  // Rebuild schedule
+  const schedContainer = document.querySelector('#loandetail .section-title').parentElement;
+  const oldItems = schedContainer.querySelectorAll('.schedule-item');
+  oldItems.forEach(el => el.remove());
+
+  let anchor = schedContainer.querySelector('.section-title');
+  for (let i = 0; i < l.installments; i++) {
+    const d = new Date();
+    d.setDate(d.getDate() + 30 * (i + 1));
+    const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const div = document.createElement('div');
+    div.className = 'schedule-item';
+    div.innerHTML = '<div class="schedule-num">' + (i + 1) + '</div><div class="schedule-date">' + dateStr + '</div><div class="schedule-amt">' + fmt(l.perInstallment) + '</div>';
+    anchor.after(div);
+    anchor = div;
+  }
+
+  // Update summary
+  const summaryRows = schedContainer.querySelectorAll('[style*="background:var(--surface-2)"] [style*="font-mono"]');
+  if (summaryRows.length >= 4) {
+    summaryRows[0].textContent = fmt(l.amount);
+    summaryRows[1].textContent = fmt(l.interest);
+    summaryRows[2].textContent = fmt(l.paid);
+    summaryRows[2].style.color = 'var(--success)';
+    summaryRows[3].textContent = fmt(l.total);
+  }
+
+  const btn = document.getElementById('pay-btn');
+  btn.textContent = 'Pay Next Installment (' + fmt(l.perInstallment) + ')';
+  btn.disabled = false;
+  btn.classList.remove('btn-outline');
+  btn.classList.add('btn-solid');
+  btn.style.color = '';
+  btn.style.borderColor = '';
+
+  // Add active loan to dashboard
+  const dashLoanItems = document.querySelectorAll('#dashboard .loan-item');
+  if (dashLoanItems[0]) {
+    const icon = dashLoanItems[0].querySelector('.loan-icon');
+    icon.classList.remove('closed');
+    icon.classList.add('active');
+    icon.innerHTML = '&#9679;';
+    dashLoanItems[0].querySelector('.loan-name').textContent = 'Active Loan';
+    dashLoanItems[0].querySelector('.loan-meta').textContent = 'Installment - ' + l.tenureDays + ' days left';
+    dashLoanItems[0].querySelector('.loan-amount').textContent = fmt(l.amount);
+    dashLoanItems[0].setAttribute('onclick', "go('loandetail')");
+  }
+}
+
+function payInstallment() {
+  const l = state.activeLoan;
+  l.installmentsPaid++;
+  l.paid += l.perInstallment;
+  const remaining = l.total - l.paid;
+
+  const scheduleItems = document.querySelectorAll('#loandetail .schedule-item');
+  if (scheduleItems[l.installmentsPaid - 1]) {
+    const numEl = scheduleItems[l.installmentsPaid - 1].querySelector('.schedule-num');
+    numEl.style.background = 'var(--success)';
+    numEl.style.color = 'white';
+    numEl.textContent = '✓';
+    scheduleItems[l.installmentsPaid - 1].querySelector('.schedule-amt').style.textDecoration = 'line-through';
+    scheduleItems[l.installmentsPaid - 1].querySelector('.schedule-amt').style.color = 'var(--fg-3)';
+  }
+
+  const balanceEl = document.querySelector('#loandetail [style*="font-size:32px"]');
+  balanceEl.textContent = fmt(Math.max(remaining, 0));
+
+  const summaryRows = document.querySelectorAll('#loandetail [style*="background:var(--surface-2)"] [style*="font-mono"]');
+  if (summaryRows.length >= 3) summaryRows[2].textContent = fmt(l.paid);
+
+  showToast('Payment of ' + fmt(l.perInstallment) + ' received');
+
+  if (l.installmentsPaid >= l.installments) {
+    const badge = document.querySelector('#loandetail [style*="dcfce7"]');
+    badge.textContent = 'Paid Off';
+
+    const btn = document.getElementById('pay-btn');
+    btn.textContent = 'Loan Fully Paid';
+    btn.disabled = true;
+    btn.classList.remove('btn-solid');
+    btn.classList.add('btn-outline');
+    btn.style.color = 'var(--success)';
+    btn.style.borderColor = 'var(--success)';
+
+    document.getElementById('clear-loan-id').textContent = 'Loan ' + l.id + ' fully repaid';
+    document.getElementById('clear-total-paid').textContent = fmt(l.total) + ' total paid';
+    setTimeout(() => go('loanclear'), 1500);
+  } else {
+    const btn = document.getElementById('pay-btn');
+    btn.textContent = 'Pay Next Installment (' + fmt(l.perInstallment) + ')';
+  }
+}
+
+function promoteLadder() {
+  state.loansCompleted++;
+  state.consecutiveOnTime++;
+
+  if (state.ladderIdx < TIERS.length - 1) state.ladderIdx++;
+  const t = tier();
+  const next = state.ladderIdx < TIERS.length - 1 ? TIERS[state.ladderIdx + 1] : null;
+
+  // Dashboard
+  document.querySelector('.dash-sub').textContent = 'Your credit ladder: ' + t.name + ' (Tier ' + t.tier + ')';
+  document.querySelector('.wallet-amount').textContent = fmt(t.max);
+  document.querySelector('.wallet-tier').textContent = t.name + ' - Tier ' + t.tier;
+  document.querySelector('.wallet-rate').textContent = 'From ' + t.rate + '%/mo';
+
+  // Mark old active loan as closed
+  const loanItems = document.querySelectorAll('#dashboard .loan-item');
+  if (loanItems[0]) {
+    const icon = loanItems[0].querySelector('.loan-icon');
+    icon.classList.remove('active');
+    icon.classList.add('closed');
+    icon.innerHTML = '&#10003;';
+    loanItems[0].querySelector('.loan-name').textContent = 'Loan ' + state.activeLoan.id;
+    loanItems[0].querySelector('.loan-meta').textContent = 'Paid off - Oct 2026';
+    loanItems[0].removeAttribute('onclick');
+  }
+
+  // Ladder screen
+  const ladderTiers = document.querySelectorAll('.ladder-tier');
+  ladderTiers.forEach((el, i) => {
+    el.classList.remove('current', 'passed', 'locked');
+    if (i < state.ladderIdx) el.classList.add('passed');
+    else if (i === state.ladderIdx) el.classList.add('current');
+    else el.classList.add('locked');
+    const nameEl = el.querySelector('.ladder-name');
+    nameEl.textContent = i === state.ladderIdx ? TIERS[i].name + ' (You)' : TIERS[i].name;
+  });
+
+  if (next) {
+    const ladderNext = document.querySelector('[style*="Next tier"]');
+    if (ladderNext) {
+      ladderNext.textContent = 'Next tier: ' + next.name;
+      ladderNext.nextElementSibling.textContent = 'Requires: ' + next.req;
+    }
+  }
+
+  // Loan cleared screen update
+  const clearTierEl = document.querySelector('#loanclear [style*="Promoted"]');
+  if (clearTierEl) {
+    clearTierEl.textContent = 'Promoted to ' + t.name + ' (Tier ' + t.tier + ')!';
+    clearTierEl.nextElementSibling.textContent = 'Max loan: ' + fmt(t.max) + ' | Rate discount: -' + t.discount + '%';
+  }
+
+  state.activeLoan = null;
+}
+
+// KYC step toggling
+let kycDone = new Set();
+function kycStep(el, num) {
+  if (kycDone.has(num)) return;
+  kycDone.add(num);
+  el.classList.add('done');
+  el.querySelector('.kyc-num').classList.remove('pending');
+  el.querySelector('.kyc-num').classList.add('done');
+  el.querySelector('.kyc-num').textContent = '✓';
+
+  if (kycDone.size === 4) {
+    const btn = document.getElementById('kyc-continue');
+    btn.disabled = false;
+    btn.textContent = 'Continue to Dashboard';
+  }
+}
+
+function selectTenure(btn) {
+  btn.parentElement.querySelectorAll('.btn').forEach(b => {
+    b.classList.remove('btn-solid');
+    b.classList.add('btn-outline');
+  });
+  btn.classList.remove('btn-outline');
+  btn.classList.add('btn-solid');
+}
+
+function runPipeline() {
+  const steps = document.querySelectorAll('#pipeline-steps .pipeline-step');
+  steps.forEach(s => { s.classList.remove('active', 'done'); });
+
+  let i = 0;
+  const interval = setInterval(() => {
+    if (i > 0) {
+      steps[i - 1].classList.remove('active');
+      steps[i - 1].classList.add('done');
+      steps[i - 1].querySelector('.pipeline-dot').textContent = '✓';
+    }
+    if (i < steps.length) {
+      steps[i].classList.add('active');
+      steps[i].querySelector('.pipeline-dot').textContent = '';
+      i++;
+    } else {
+      clearInterval(interval);
+      populateOffer();
+      setTimeout(() => go('offer'), 400);
+    }
+  }, 600);
+}
+
+// Toast
+function showToast(msg) {
+  const existing = document.querySelector('.toast');
+  if (existing) existing.remove();
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  document.querySelector('.phone-content').appendChild(t);
+  setTimeout(() => t.remove(), 2600);
+}
+
+// Confetti
+function spawnConfetti(containerId) {
+  const container = document.getElementById(containerId || 'confetti');
+  container.innerHTML = '';
+  const colors = ['#34D399', '#F59E0B', '#3B82F6', '#EC4899', '#8B5CF6'];
+  for (let i = 0; i < 40; i++) {
+    const c = document.createElement('div');
+    const size = 6 + Math.random() * 6;
+    c.style.cssText = `
+      position: absolute;
+      width: ${size}px;
+      height: ${size}px;
+      background: ${colors[Math.floor(Math.random() * colors.length)]};
+      border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
+      left: ${Math.random() * 100}%;
+      top: -10px;
+      animation: fall ${1.5 + Math.random() * 2}s ease-out forwards;
+      animation-delay: ${Math.random() * 0.5}s;
+      opacity: 0.9;
+    `;
+    container.appendChild(c);
+  }
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes fall {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(600px) rotate(${360 + Math.random() * 360}deg); opacity: 0; }
+    }
+  `;
+  container.appendChild(style);
+}
+</script>
+</body></html>

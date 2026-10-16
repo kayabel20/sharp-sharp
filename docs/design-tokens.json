@@ -1,0 +1,81 @@
+{
+  "$schema": "https://design-tokens.org/draft/2024-04-21/schema.json",
+  "$description": "Sharp Sharp design tokens — copy into Figma Variables, Tailwind config, or your design system.",
+  "color": {
+    "brand": {
+      "50":  { "value": "#E8F4FD", "type": "color" },
+      "100": { "value": "#C5E3F9", "type": "color" },
+      "200": { "value": "#9DD0F5", "type": "color" },
+      "300": { "value": "#6DB9EF", "type": "color" },
+      "400": { "value": "#3FA2E8", "type": "color" },
+      "500": { "value": "#2E86AB", "type": "color", "$description": "Primary — Sharp Sharp blue" },
+      "600": { "value": "#256D8C", "type": "color" },
+      "700": { "value": "#1C546D", "type": "color" },
+      "800": { "value": "#143B4E", "type": "color" },
+      "900": { "value": "#0B222F", "type": "color" }
+    },
+    "semantic": {
+      "success": { "value": "#10B981", "type": "color" },
+      "warning": { "value": "#F59E0B", "type": "color" },
+      "danger":  { "value": "#EF4444", "type": "color" }
+    },
+    "neutral": {
+      "bg":   { "value": "#F9FAFB", "type": "color" },
+      "surface": { "value": "#FFFFFF", "type": "color" },
+      "border": { "value": "#E5E7EB", "type": "color" },
+      "muted":  { "value": "#6B7280", "type": "color" },
+      "ink":    { "value": "#111827", "type": "color" }
+    }
+  },
+  "typography": {
+    "family": {
+      "sans": { "value": "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif", "type": "fontFamily" },
+      "mono": { "value": "ui-monospace, SF Mono, Menlo, monospace", "type": "fontFamily" }
+    },
+    "size": {
+      "display": { "value": "40px", "type": "dimension" },
+      "h1":      { "value": "24px", "type": "dimension" },
+      "h2":      { "value": "20px", "type": "dimension" },
+      "h3":      { "value": "16px", "type": "dimension" },
+      "body":    { "value": "14px", "type": "dimension" },
+      "caption": { "value": "12px", "type": "dimension" }
+    },
+    "weight": {
+      "regular":  { "value": 400, "type": "fontWeight" },
+      "medium":   { "value": 500, "type": "fontWeight" },
+      "semibold": { "value": 600, "type": "fontWeight" },
+      "bold":     { "value": 700, "type": "fontWeight" },
+      "heavy":    { "value": 800, "type": "fontWeight" }
+    }
+  },
+  "radius": {
+    "sm":   { "value": "8px",  "type": "dimension" },
+    "md":   { "value": "12px", "type": "dimension" },
+    "lg":   { "value": "20px", "type": "dimension" },
+    "xl":   { "value": "32px", "type": "dimension" },
+    "pill": { "value": "9999px", "type": "dimension" }
+  },
+  "spacing": {
+    "1": { "value": "4px",  "type": "dimension" },
+    "2": { "value": "8px",  "type": "dimension" },
+    "3": { "value": "12px", "type": "dimension" },
+    "4": { "value": "16px", "type": "dimension" },
+    "5": { "value": "20px", "type": "dimension" },
+    "6": { "value": "24px", "type": "dimension" },
+    "8": { "value": "32px", "type": "dimension" },
+    "12": { "value": "48px", "type": "dimension" }
+  },
+  "shadow": {
+    "card":  { "value": "0 1px 2px rgba(20,30,50,0.06)", "type": "shadow" },
+    "popover": { "value": "0 4px 30px rgba(20,30,50,0.10)", "type": "shadow" },
+    "device":  { "value": "0 30px 60px -20px rgba(20,30,50,0.45)", "type": "shadow" }
+  },
+  "screens": {
+    "iphone-15-pro": {
+      "width": "393px",
+      "height": "852px",
+      "tap-target-min": "44px",
+      "page-padding": "16px"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "n": 40000,
+  "seed": 7,
+  "feature_count": 35,
+  "models": [
+    {
+      "name": "credit_score_v1",
+      "type": "universal",
+      "auc": 0.8027,
+      "ks": 0.4923,
+      "note": "Single model for all borrowers. Consolidated from earlier persona-specific models."
+    }
+  ]
+}
